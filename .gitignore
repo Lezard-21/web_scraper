@@ -8,6 +8,6 @@ wheels/
 
 # Virtual environments
 .venv
-
+venv
 # script generated files
 *.html

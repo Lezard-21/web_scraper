@@ -3,8 +3,14 @@ from lxml import etree
 
 
 def scrap(url: str):
-    temp = req.get(url)
-    parse_to_html(temp.text)
+    try:
+        response = req.get(url)
+        response.raise_for_status()  # Raise an exception for bad status codes
+        parse_to_html(response.text)
+    except req.RequestError as e:
+        print(f"Error fetching URL {url}: {e}")
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
 
 
 def parse_to_html(raw_str: str):
@@ -17,20 +23,36 @@ def parse_to_html(raw_str: str):
 
 
 def save_prety_html(html: str, file_name: str = "example.html"):
-    with open(file_name, "w") as f:
-        f.write(html)
+    try:
+        with open(file_name, "w", encoding="utf-8") as f:
+            f.write(html)
+    except IOError as e:
+        print(f"Error writing to file {file_name}: {e}")
 
 
-def get_htags(html_root: etree._Element):
-    tags = search_tags(html_root, "h1 | //h2 | //h3")
-    for header in tags:
-        print(
-            f"Etiqueta: {header.tag}, Texto: {header.text}")
+# Define configurable list of tags to search for
+DEFAULT_HEADER_TAGS = ["h1", "h2", "h3"]
 
 
-def search_tags(html_root: etree._Element, tag: str):
-    headers = html_root.xpath(f"//{tag}")
-    return headers
+def generate_xpath_expression(tags: list[str]) -> str:
+
+    return " | ".join(f"//{tag}" for tag in tags)
+
+
+def get_htags(html_root: etree._Element, tags: list[str] = DEFAULT_HEADER_TAGS):
+    xpath_expr = generate_xpath_expression(tags)
+    headers = search_tags(html_root, xpath_expr)
+    for header in headers:
+        print(f"Etiqueta: {header.tag}, Texto: {header.text}")
+
+
+def search_tags(html_root: etree._Element, tag: str) -> list[etree._Element]:
+    try:
+        headers = html_root.xpath(tag)
+        return headers
+    except etree.XPathEvalError as e:
+        print(f"Invalid XPath expression: {e}")
+        return []
 
 
 if __name__ == "__main__":

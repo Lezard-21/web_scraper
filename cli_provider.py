@@ -2,39 +2,31 @@ from rich.console import Console
 from rich.columns import Columns
 from rich.table import Table
 from rich.text import Text
+from acci_provider import get_leyend
 
 console = Console()
-# console.print("""
-# \t┌──────────────────────────────────────────────────┐
-# \t│                                                  │
-# \t│                                                  │
-# \t│                                                  │
-# \t│[green] ▄▄█████▄   ▄█████▄   ██▄████   ▄█████▄  ██▄███▄[/green]  │
-# \t│[green] ██▄▄▄▄ ▀  ██▀    ▀   ██▀       ▀ ▄▄▄██  ██▀  ▀██[/green]  │
-# \t│[green]  ▀▀▀▀██▄  ██         ██       ▄██▀▀▀██  ██    ██ [/green] │
-# \t│[green] █▄▄▄▄▄██  ▀██▄▄▄▄█   ██       ██▄▄▄███  ███▄▄██▀ [/green] │
-# \t│[green]  ▀▀▀▀▀▀     ▀▀▀▀▀    ▀▀        ▀▀▀▀ ▀▀  ██ ▀▀▀   [/green] │
-# \t│[green]                                         ██       [/green] │
-# \t│                                                  │
-# \t└──────────────────────────────────────────────────┘"
-#   """)
-logo = """\n\n
-          /$$$$$$   /$$$$$$  /$$$$$$$   /$$$$$$  /$$$$$$$
-         /$$__  $$ /$$__  $$| $$__  $$ /$$__  $$| $$__  $$
-        | $$  \\__/| $$  \\__/| $$  \\ $$| $$ \\  $$| $$  \\  $$
-        |  $$$$$$ | $$      | $$$$$$$/| $$$$$$$$| $$$$$$$/
-        \\____  $$| $$      | $$__  $$| $$__  $$| $$____/
-   /$$  \\ $$| $$    $$| $$  \\ $$| $$  | $$| $$
-  |  $$$$$$/|  $$$$$$/| $$  | $$| $$  | $$| $$
- \\______/  \\______/ |__/  |__/|__/  |__/|__/
-                              \n
-       v.0.1
-        """
+# ┌──────────────────────────────────────────────────────┐
+# │                                                      │
+# │                                                      │
+# │                                                      │
+# │   ▄▄█████▄   ▄█████▄   ██▄████   ▄█████▄  ██▄███▄    │
+# │   ██▄▄▄▄ ▀  ██▀    ▀   ██▀       ▀ ▄▄▄██  ██▀  ▀██   │
+# │    ▀▀▀▀██▄  ██         ██       ▄██▀▀▀██  ██    ██   │
+# │   █▄▄▄▄▄██  ▀██▄▄▄▄█   ██       ██▄▄▄███  ███▄▄██▀   │
+# │    ▀▀▀▀▀▀     ▀▀▀▀▀    ▀▀        ▀▀▀▀ ▀▀  ██ ▀▀▀     │
+# │                                           ██         │
+# │                                                      │
+# └──────────────────────────────────────────────────────┘
+#                           v1.0
+
+leyend = get_leyend("SCRAP")
+# center para mostrar el menu en diferentes columnas y centrado
+alingment = "center"
 
 options_principal_menu = [
-    "[1]  Open from a link",
-    "[2]  Open from a file",
-    "[3]  Exit"]
+    "Open from a link",
+    "Open from a file",
+    "Exit"]
 
 options_link_menu = [
     "Search tags",
@@ -48,10 +40,21 @@ options_link_menu = [
     "Show full html",
     "Exit"]
 
+menu_names = {
+    "principal": options_principal_menu,
+    "link": options_link_menu,
+}
+# para agregar mas menus solo se tienen que:
+#    1.crear una lista con las opciones
+#    2.-asignarle un nombre y agregarlo a la lista de nombres(menu_names), tambien asignarle una lista de opciones
+#   3-agregar la lista match
 
-def print_options(options: list, two_columns: bool = False):
-    numbered_options = [f"[{i}] {option}" for i,
+
+def print_options(options: list):
+    numbered_options = [f"[[cyan bold]{i}[/cyan bold]] {option}" for i,
                         option in enumerate(options, start=1)]
+    two_columns = True if len(
+        numbered_options) > 5 and alingment == "center" else False
     if two_columns:
         mid_point = len(numbered_options) // 2
         col1 = numbered_options[:mid_point]
@@ -63,25 +66,24 @@ def print_options(options: list, two_columns: bool = False):
         columns = Columns([table, table2],
                           equal=True,
                           expand=True,
-                          width=console.width // 2 - 2,
-                          align="center")
+                          width=(console.width // 2) - 5,
+                          align=alingment)
         console.print(columns)
     else:
-        for option in numbered_options:
-            console.print(option, padding=2)
+        table = Table(show_header=False, box=None)
+        [table.add_row(option) for option in numbered_options]
+        console.print(table, justify=alingment)
     console.print()
 
 
 def show_menu(menu: str):
-    title = Text(logo, style="bold green", justify="center")
-    console.print(title, justify="center")
-    match menu:
-        case "principal":
-            print_options(options_principal_menu)
-        case "link":
-            print_options(options_link_menu, True)
-        case _:
-            print_options(options_principal_menu)
+    title = Text(leyend, style="bold green")
+    title_container = Table(show_header=False, box=None)
+    [title_container.add_row(title)]
+    console.print(title_container, justify=alingment)
+    for name, options in menu_names:
+        if name == menu:
+            print_options(options)
 
 
 if __name__ == "__main__":
