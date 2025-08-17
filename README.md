@@ -100,4 +100,5 @@ Asegúrate de que el nombre coincide con [menu.json](cci:7://file:///home/david/
 
 - El título en ASCII se genera con [get_leyend()](cci:1://file:///home/david/workspace/web_scraping/acci_provider.py:39:0-48:65) en [acci_provider.py](cci:7://file:///home/david/workspace/web_scraping/acci_provider.py:0:0-0:0) usando pyfiglet.
 - La disposición del menú y estilo usan Rich. Si no ves colores, verifica tu terminal.
-```
+
+Paco se que estas leeyendo esto
