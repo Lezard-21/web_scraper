@@ -1,0 +1,18 @@
+{
+    "principal": {
+        "title": "Main Menu",
+        "items": [
+            { "label": "Open from a link", "action": "open_link" },
+            { "label": "Open from a file", "action": "open_file" },
+            { "label": "Exit", "action": "exit_app" }
+        ]
+    },
+    "link": {
+        "title": "Link Menu",
+        "items": [
+            { "label": "Search tags", "action": "search_tags" },
+            { "label": "Show full html", "action": "show_html" },
+            { "label": "Exit", "action": "exit_app" }
+        ]
+    }
+}
